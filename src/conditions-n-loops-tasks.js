@@ -306,10 +306,57 @@ function sortByAsc(arr) {
  *  'qwerty', 2 => 'qetwry' => 'qtrewy'
  *  '012345', 3 => '024135' => '043215' => '031425'
  *  'qwerty', 3 => 'qetwry' => 'qtrewy' => 'qrwtey'
+ *  'qwerty', 4 => 'qetwry' => 'qtrewy' => 'qrwtey' => 'qwerty'
+ *
+ *
+ *
+ * '1',           0 =>> '1'
+ * '12',          0 =>> '12'
+ * '123',         2 => '132'      => '123'
+ * '1234',        2 => '1324'     => '1234'
+ * '12345',       4 => '13524'    => '15432'    => '14243'    => '12345'
+ * '123456',      4 => '135246'   => '154326'   => '142536'   => '123456'
+ * '1234567',     3 => '1357246'  => '1526374'  => '1234567'
+ * '12345678',    3 => '13572468' => '15263748' => '1234567'
+ * '123456789',   3 => '13572468' => '15263748' => '1234567'
  */
-function shuffleChar(/* str, iterations */) {
-  throw new Error('Not implemented');
+function shuffleChar(str, iterations) {
+  if (iterations <= 0) {
+    return str;
+  }
+
+  let iter = iterations;
+  let result = str;
+  for (let i = 1; i <= iter; i += 1) {
+    let temp = '';
+    for (let j = 0; j < result.length; j += 2) {
+      temp += result[j];
+    }
+    for (let j = 1; j < result.length; j += 2) {
+      temp += result[j];
+    }
+    result = temp;
+    if (str === result) {
+      iter %= i;
+      i = 0;
+    }
+  }
+
+  return result;
 }
+
+// for (let i = 1; i <= 84; i += 1) {
+//   const base = Array.from(new Array(i), (_, j) => {
+//     return String.fromCharCode(48 + j);
+//   }).join('');
+//   // console.log(base);
+//   for (let j = 1; j < 100; j += 1) {
+//     if (base === shuffleChar(base, j)) {
+//       console.log(`${base.length}`.padStart(2), `${j}`.padStart(2), base);
+//       break;
+//     }
+//   }
+// }
 
 /**
  * Returns the nearest largest integer consisting of the digits of the given positive integer.
