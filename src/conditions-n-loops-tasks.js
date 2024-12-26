@@ -305,6 +305,8 @@ function getBalanceIndex(/* arr */) {
   throw new Error('Not implemented');
 }
 
+// ! STUPID LINTER, DO NOT GIVES TO ME WRITE CODE MORE BEAUTY
+// ! AND ITS ON EVERY FUNCITON
 /**
  * Generates a spiral matrix of a given size, filled with numbers in ascending order starting from one.
  * The direction of filling with numbers is clockwise.
@@ -326,8 +328,74 @@ function getBalanceIndex(/* arr */) {
  *          [10, 9,  8,  7]
  *        ]
  */
-function getSpiralMatrix(/* size */) {
-  throw new Error('Not implemented');
+function getSpiralMatrix(size) {
+  const arr = [];
+  arr.length = size;
+  for (let i = 0; i < size; i += 1) {
+    arr[i] = [];
+    for (let j = 0; j < size; j += 1) {
+      arr[i][j] = 0;
+    }
+    arr[i].length = size;
+  }
+
+  let x = 0;
+  let y = 0;
+  let n = 1;
+  let d = 'right';
+
+  const turn = () => {
+    let dir = '';
+    if (d === 'right') {
+      dir = 'bottom';
+    } else if (d === 'bottom') {
+      dir = 'left';
+    } else if (d === 'left') {
+      dir = 'top';
+    } else if (d === 'top') {
+      dir = 'right';
+    }
+    d = dir;
+  };
+
+  const move = (step) => {
+    switch (d) {
+      case 'right':
+        x += step;
+        break;
+      case 'bottom':
+        y += step;
+        break;
+      case 'left':
+        x -= step;
+        break;
+      case 'top':
+        y -= step;
+        break;
+      default:
+        break;
+    }
+  };
+
+  for (let i = 0; i < size * size; i += 1) {
+    if (
+      y >= 0 &&
+      y < arr.length &&
+      x >= 0 &&
+      x < arr[y].length &&
+      arr[y][x] === 0
+    ) {
+      arr[y][x] = n;
+      n += 1;
+      move(1);
+    } else {
+      i -= 1;
+      move(-1);
+      turn();
+      move(1);
+    }
+  }
+  return arr;
 }
 
 /**
