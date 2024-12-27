@@ -533,6 +533,34 @@ function shuffleChar(str, iterations) {
   return result;
 }
 
+// ? Правила
+// Не менять одинаковые числа
+// Сравнивать сдвинутый range
+// После сдвига, отсортировать оставшийся range по возрастанию
+// Двигать слево 0 нет смысла
+// ? Алгоритм
+// 1. Сначало двигать крайнее правое число на лево,
+// до тех пор пока число не станет больше заданного,
+// если нет, то берем след число из списка
+// 2. Оставшийся range нужно отсортировать по возрастанию
+// 3. Возвратить число
+// ! Есть кейс с "52174920893" для которого это не до конца подойдет
+// ! По этому нужно уже в этом скоупе повторить этот алгоритм
+// ! ЕЩЕ НЕ ДАЕТ ПИСАТЬ continue, но не хочется создавать функции из за чего вот такой вот вложенный код
+// - 123450
+// 0: 123450 -> 123405 -> 123045 -> 120345 ...
+// 5: 123450 -> 123540 ->> 123504 [SOLVED]
+// - 12344
+// 4: 12344 -> 12434 [SOLVED]
+// - 123440
+// 4: 123440 -> 124340 ->> 124034
+// - 1203450
+// 5: 1203450 -> 1203540 ->> 1203504
+// - 90822
+// 2: 90822 -> 90282 -> 92082 ->> 92028
+// - 321321
+// 1: 321321 -> 321312 -> 321132 -> 312132 -> 312132 -> 132132
+// 2: 321321 -> 321231 -> 322131 ->> 322113
 /**
  * Returns the nearest largest integer consisting of the digits of the given positive integer.
  * If there is no such number, it returns the original number.
@@ -550,9 +578,53 @@ function shuffleChar(str, iterations) {
  * @param {number} number The source number
  * @returns {number} The nearest larger number, or original number if none exists.
  */
-function getNearestBigger(/* number */) {
-  throw new Error('Not implemented');
+function getNearestBigger(number) {
+  if (number < 12) {
+    return number;
+  }
+  let min = number;
+
+  const digits = [...String(number)];
+  let jMax = 0;
+  for (let i = digits.length - 1; i >= 1; i -= 1) {
+    const digit = digits[i];
+    if (digit !== '0') {
+      for (let j = i - 1; j >= jMax; j -= 1) {
+        const digitsCopy = Array.from(digits);
+        const tDigit = digitsCopy[j];
+        if (Number(tDigit) < Number(digit)) {
+          [digitsCopy[i], digitsCopy[j]] = [digitsCopy[j], digitsCopy[i]];
+          const slice = [];
+          for (let k = j + 1; k < digitsCopy.length; k += 1) {
+            slice.push(digitsCopy[k]);
+          }
+
+          slice.sort((a, b) => Number(a) - Number(b));
+          digitsCopy.splice(j + 1, slice.length, ...slice);
+
+          const result = Number(digitsCopy.join(''));
+          if (result > number) {
+            if (jMax === 0) {
+              jMax = j;
+            }
+            if (min === number) {
+              min = result;
+            } else if (result < min) {
+              min = result;
+            }
+          }
+        }
+      }
+    }
+  }
+
+  return min;
 }
+
+// getNearestBigger(52174920893);
+//   52174920893
+// + 52174923089
+// - 52174920938
 
 module.exports = {
   isPositive,
