@@ -479,15 +479,54 @@ function rotateMatrix(matrix) {
  *  [-2, 9, 5, -3]  => [-3, -2, 5, 9]
  */
 function sortByAsc(arr) {
+  if (arr.length <= 1) {
+    return arr;
+  }
+
+  function arraySlice(array, startIndex = 0, endIndex = array.length) {
+    const start = startIndex;
+    const end = endIndex;
+
+    const result = [];
+    for (let i = start; i < end; i += 1) {
+      result[i - start] = arr[i];
+    }
+
+    return result;
+  }
+
   const result = arr;
-  for (let i = 0; i < result.length; i += 1) {
-    for (let j = i + 1; j < result.length; j += 1) {
-      if (result[i] > result[j]) {
-        [result[i], result[j]] = [result[j], result[i]];
-      }
+  const middle = Math.floor(arr.length / 2);
+  const leftSorted = sortByAsc(arraySlice(arr, 0, middle));
+  const rightSorted = sortByAsc(arraySlice(arr, middle));
+
+  let leftIndex = 0;
+  let rightIndex = 0;
+
+  while (leftIndex < leftSorted.length && rightIndex < rightSorted.length) {
+    const i = leftIndex + rightIndex;
+    if (leftSorted[leftIndex] <= rightSorted[rightIndex]) {
+      result[i] = leftSorted[leftIndex];
+      leftIndex += 1;
+    } else {
+      result[i] = rightSorted[rightIndex];
+      rightIndex += 1;
     }
   }
-  return result;
+
+  while (leftIndex < leftSorted.length) {
+    const i = leftIndex + rightIndex;
+    result[i] = leftSorted[leftIndex];
+    leftIndex += 1;
+  }
+
+  while (rightIndex < rightSorted.length) {
+    const i = leftIndex + rightIndex;
+    result[i] = rightSorted[rightIndex];
+    rightIndex += 1;
+  }
+
+  return arr;
 }
 
 /**
